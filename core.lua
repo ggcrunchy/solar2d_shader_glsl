@@ -37,12 +37,16 @@ local ModuleAt = ...
 --- Registers the shader building blocks.
 function M.Register ()
 	loader.Load{
-		constants = { "constants.pi" },
-		functions = {
-			"functions.bump", "functions.decode_vars", "functions.neighbors", "functions.sphere", "functions.texels",
-			"functions.noise.simplex", "functions.noise.worley"
-		},
-		from = ModuleAt
+		from = ModuleAt,
+
+		"constants.pi",
+		"functions.bump",
+		"functions.decode_vars",
+		"functions.neighbors",
+		"functions.sphere",
+		"functions.texels",
+		"functions.noise.simplex",
+		"functions.noise.worley"
 	}
 end
 
