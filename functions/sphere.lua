@@ -34,7 +34,7 @@ return {
 		P_POSITION float dist_sq = dot(diff, diff);
 
 		#ifndef SPHERE_NO_DISCARD
-			if (dist_sq > 1.) discard;
+			if (dist_sq > 1.) return vec2(-1.);
 		#endif
 
 		P_POSITION float z = sqrt(1. - dist_sq);
@@ -52,7 +52,7 @@ return {
 		P_POSITION float dist_sq = dot(diff, diff);
 
 		#ifndef SPHERE_NO_DISCARD
-			if (dist_sq > 1.) discard;
+			if (dist_sq > 1.) return vec4(-1.);
 		#endif
 
 		P_POSITION float z = sqrt(1. - dist_sq);
@@ -66,7 +66,7 @@ return {
 		P_POSITION float dist_sq = dot(diff, diff);
 
 		#ifndef SPHERE_NO_DISCARD
-			if (dist_sq > 1.) discard;
+			if (dist_sq > 1.) return vec2(-1.);
 		#endif
 
 		P_POSITION float z = sqrt(1. - dist_sq);
@@ -83,7 +83,7 @@ return {
 		P_POSITION float dist_sq = dot(diff, diff);
 
 		#ifndef SPHERE_NO_DISCARD
-			if (dist_sq > 1.) discard;
+			if (dist_sq > 1.) return vec4(-1.);
 		#endif
 
 		P_POSITION float z = sqrt(1. - dist_sq);
@@ -98,7 +98,7 @@ return {
 	vec3 GetTangent (vec2 diff, float phi)
 	{
 		// In unit sphere, diff.y = sin(theta), sqrt(1 - sin(theta)^2) = cos(theta).
-		return normalize(vec3(diff.y * sin(phi + PI_OVER_TWO), diff.y * cos(phi + PI_OVER_TWO), sqrt(1. - diff.y * diff.y)));
+		return normalize(vec3(diff.yy * sin(vec2(phi + PI_OVER_TWO, -phi)), sqrt(1. - diff.y * diff.y)));
 	}
 ]]
 
