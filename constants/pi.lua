@@ -26,9 +26,9 @@
 -- Export the constants.
 return [[
 	float PI = 4. * atan(1.);
-	float TWO_PI = 2. * PI;
-	float PI_OVER_TWO = PI / 2.;
+	float TWO_PI = 8. * atan(1.);
+	float PI_OVER_TWO = 2. * atan(1.);
 
-	float ONE_OVER_PI = 1. / PI;
-	float ONE_OVER_TWO_PI = .5 / PI;
+	float ONE_OVER_PI = 1. / atan(1.);
+	float ONE_OVER_TWO_PI = .5 / atan(1.);
 ]]
