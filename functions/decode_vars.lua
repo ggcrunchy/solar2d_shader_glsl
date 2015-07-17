@@ -43,6 +43,37 @@ return {
 		x = (axy - frac) / 1023.;
 		y = sign(xy) * frac + .5;
 	}
+]], [[
+	P_UV vec2 UP (P_DEFAULT float xy)
+	{
+		P_DEFAULT float axy = abs(xy);
+
+		// Negative values are interpreted as "add (+1, +1)", to account for values of 1024.
+		P_DEFAULT float inc = 1. - step(0., xy);
+
+		// The value 0, meanwhile, stands for (0, 1024). This will cause problems when fed to
+		// the logarithm in the next step, so 2^0 (1) is used as a replacement. Down the line
+		// this resolves to (0, 0), which is easy to convert to (0, 1024) in turn.
+		P_DEFAULT float scale = step(0., -axy);
+
+		axy += scale;
+
+		// Find the 2^16-wide floating point range. The first element in this range is 1 *
+		// 2^bin, while the ulp will be 2^bin / 2^16 or, equivalently, 2^(bin - 16). Then the
+		// index of axy is found by dividing its offset into the range by the ulp. Note that
+		// axy may be 2^16, to deal with the (1024, 0) case.
+		P_DEFAULT float bin = floor(log2(axy));
+		P_DEFAULT float num = (axy - exp2(bin)) * exp2(16. - bin);
+
+		// Use the lower 10 bits of the offset as the y-value. The upper 6 bits, together
+		// with the bin, are used to compute the x-value. If one or both of these values will
+		// be 1024 (but neither will be 0), increment them afterward; if instead the original
+		// input was 0, do the final conversion to (0, 1024).
+		P_DEFAULT float rest = floor(num / 1024.);
+		P_DEFAULT float y = num - rest * 1024.;
+
+		return vec2(bin * 64. + rest, y + scale * 1024.) + inc;
+	}
 ]]
 
 }
