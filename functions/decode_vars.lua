@@ -27,24 +27,11 @@
 return {
 
 [[
-	vec2 UnitPair (float xy)
-	{
-		P_UV float axy = abs(xy);
-		P_UV float frac = fract(axy);
+	#if defined(FRAGMENT_SHADER) && !defined(GL_FRAGMENT_PRECISION_HIGH)
+		#error "Not enough precision to decode number"
+	#endif
 
-		return vec2((axy - frac) / 1023., sign(xy) * frac + .5);
-	}
-]], [[
-	void UnitPair4_Out (vec4 xy, out vec4 x, out vec4 y)
-	{
-		P_UV vec4 axy = abs(xy);
-		P_UV vec4 frac = fract(axy);
-
-		x = (axy - frac) / 1023.;
-		y = sign(xy) * frac + .5;
-	}
-]], [[
-	P_UV vec2 TenBitsPair (P_DEFAULT float xy)
+	P_DEFAULT vec2 TenBitsPair (P_DEFAULT float xy)
 	{
 		P_DEFAULT float axy = abs(xy);
 
@@ -65,6 +52,20 @@ return {
 		P_DEFAULT float y_bias = 1. - step(0., xy);
 
 		return vec2(bin * 64. + rest, y + y_bias);
+	}
+]], [[
+	P_DEFAULT vec2 UnitPair (P_DEFAULT float xy)
+	{
+		return TenBitsPair(xy) / 1024.;
+	}
+]], [[
+	void UnitPair4_Out (vec4 xy, out vec4 x, out vec4 y)
+	{
+		P_UV vec4 axy = abs(xy);
+		P_UV vec4 frac = fract(axy);
+
+		x = (axy - frac) / 1023.;
+		y = sign(xy) * frac + .5;
 	}
 ]]
 
