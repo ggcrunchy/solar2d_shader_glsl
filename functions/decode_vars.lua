@@ -49,9 +49,37 @@ return {
 		// found in the standard way and then incremented.
 		P_DEFAULT float rest = floor(num / 1024.);
 		P_DEFAULT float y = num - rest * 1024.;
-		P_DEFAULT float y_bias = 1. - step(0., xy);
+		P_DEFAULT float y_bias = step(0., -xy);
 
 		return vec2(bin * 64. + rest, y + y_bias);
+	}
+]], [[
+	#if defined(FRAGMENT_SHADER) && !defined(GL_FRAGMENT_PRECISION_HIGH)
+		#error "Not enough precision to decode number"
+	#endif
+
+	void TenBitsPair4_Out (P_DEFAULT vec4 xy, P_DEFAULT out vec4 xo, P_DEFAULT out vec4 yo)
+	{
+		P_DEFAULT vec4 axy = abs(xy);
+
+		// Select the 2^16-wide floating point range. The first element in this range is 1 *
+		// 2^bin, while the ulp will be 2^bin / 2^16 or, equivalently, 2^(bin - 16). Then the
+		// index of axy is found by dividing its offset into the range by the ulp.
+		P_DEFAULT vec4 bin = floor(log2(axy));
+		P_DEFAULT vec4 num = (axy - exp2(bin)) * exp2(vec4(16.) - bin);
+
+		// The lower 10 bits of the offset make up the y-value. The upper 6 bits, along with
+		// the bin index, are used to compute the x-value. The bin index can exceed 15, so x
+		// can assume the value 1024 without incident. It seems at first that y cannot, since
+		// 10 bits fall just short. If the original input was signed, however, this is taken
+		// to mean "y = 1024". Rather than conditionally setting it directly, though, 1023 is
+		// found in the standard way and then incremented.
+		P_DEFAULT vec4 rest = floor(num / 1024.);
+		P_DEFAULT vec4 y = num - rest * 1024.;
+		P_DEFAULT vec4 y_bias = step(0., -xy);
+
+		xo = bin * 64. + rest;
+		yo = y + y_bias;
 	}
 ]], [[
 	P_DEFAULT vec2 UnitPair (P_DEFAULT float xy)
@@ -59,13 +87,14 @@ return {
 		return TenBitsPair(xy) / 1024.;
 	}
 ]], [[
-	void UnitPair4_Out (vec4 xy, out vec4 x, out vec4 y)
+	void UnitPair4_Out (P_DEFAULT vec4 xy, P_DEFAULT out vec4 xo, P_DEFAULT out vec4 yo)
 	{
-		P_UV vec4 axy = abs(xy);
-		P_UV vec4 frac = fract(axy);
+		P_DEFAULT vec4 x, y;
 
-		x = (axy - frac) / 1023.;
-		y = sign(xy) * frac + .5;
+		TenBitsPair4_Out(xy, x, y);
+
+		xo = x / 1024.;
+		yo = y / 1024.;
 	}
 ]]
 
