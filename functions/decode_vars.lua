@@ -24,20 +24,18 @@
 --
 
 -- --
-local Qualifiers = {}
+local Replacements = {}
 
 if system.getInfo("platformName") == "Win" then
-	Qualifiers.D_OUT = [[P_DEFAULT out]]
-	Qualifiers.UV_OUT = [[P_UV out]]
+	Replacements.D_OUT = [[P_DEFAULT out]]
+	Replacements.UV_OUT = [[P_UV out]]
 else
-	Qualifiers.D_OUT = [[out P_DEFAULT]]
-	Qualifiers.UV_OUT = [[out P_UV]]
+	Replacements.D_OUT = [[out P_DEFAULT]]
+	Replacements.UV_OUT = [[out P_UV]]
 end
 
 -- Export the functions.
 return {
-
-	replacements = Qualifiers,
 
 [[
 	#if defined(FRAGMENT_SHADER) && !defined(GL_FRAGMENT_PRECISION_HIGH)
@@ -52,7 +50,7 @@ return {
 		// 2^bin, while the ulp will be 2^bin / 2^16 or, equivalently, 2^(bin - 16). Then the
 		// index of axy is found by dividing its offset into the range by the ulp.
 		P_DEFAULT float bin = floor(log2(axy));
-		P_DEFAULT float num = (axy - exp2(bin)) * exp2(16. - bin);
+		P_DEFAULT float num = exp2(16. - bin) * axy - 65536.;
 
 		// The lower 10 bits of the offset make up the y-value. The upper 6 bits, along with
 		// the bin index, are used to compute the x-value. The bin index can exceed 15, so x
@@ -79,7 +77,7 @@ return {
 		// 2^bin, while the ulp will be 2^bin / 2^16 or, equivalently, 2^(bin - 16). Then the
 		// index of axy is found by dividing its offset into the range by the ulp.
 		P_DEFAULT vec4 bin = floor(log2(axy));
-		P_DEFAULT vec4 num = (axy - exp2(bin)) * exp2(vec4(16.) - bin);
+		P_DEFAULT vec4 num = exp2(16. - bin) * axy - 65536.;
 
 		// The lower 10 bits of the offset make up the y-value. The upper 6 bits, along with
 		// the bin index, are used to compute the x-value. The bin index can exceed 15, so x
@@ -127,6 +125,6 @@ return {
 		xo = xhp;
 		yo = yhp;
 	}
-]], replacements = Qualifiers
+]], replacements = Replacements
 
 }
