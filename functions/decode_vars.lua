@@ -23,8 +23,21 @@
 -- [ MIT license: http://www.opensource.org/licenses/mit-license.php ]
 --
 
+-- --
+local Qualifiers = {}
+
+if system.getInfo("platformName") == "Win" then
+	Qualifiers.D_OUT = [[P_DEFAULT out]]
+	Qualifiers.UV_OUT = [[P_UV out]]
+else
+	Qualifiers.D_OUT = [[out P_DEFAULT]]
+	Qualifiers.UV_OUT = [[out P_UV]]
+end
+
 -- Export the functions.
 return {
+
+	replacements = Qualifiers,
 
 [[
 	#if defined(FRAGMENT_SHADER) && !defined(GL_FRAGMENT_PRECISION_HIGH)
@@ -58,7 +71,7 @@ return {
 		#error "Not enough precision to decode number"
 	#endif
 
-	void TenBitsPair4_Out (P_DEFAULT vec4 xy, P_DEFAULT out vec4 xo, P_DEFAULT out vec4 yo)
+	void TenBitsPair4_OutH (P_DEFAULT vec4 xy, $(D_OUT) vec4 xo, $(D_OUT) vec4 yo)
 	{
 		P_DEFAULT vec4 axy = abs(xy);
 
@@ -81,21 +94,39 @@ return {
 		xo = bin * 64. + rest;
 		yo = y + y_bias;
 	}
+
+	void TenBitsPair4_OutM (P_DEFAULT vec4 xy, $(UV_OUT) vec4 xo, $(UV_OUT) vec4 yo)
+	{
+		P_DEFAULT vec4 xhp, yhp;
+
+		TenBitsPair4_OutH(xy, xhp, yhp);
+
+		xo = xhp;
+		yo = yhp;
+	}
 ]], [[
 	P_DEFAULT vec2 UnitPair (P_DEFAULT float xy)
 	{
 		return TenBitsPair(xy) / 1024.;
 	}
 ]], [[
-	void UnitPair4_Out (P_DEFAULT vec4 xy, P_DEFAULT out vec4 xo, P_DEFAULT out vec4 yo)
+	void UnitPair4_OutH (P_DEFAULT vec4 xy, $(D_OUT) vec4 xo, $(D_OUT) vec4 yo)
 	{
-		P_DEFAULT vec4 x, y;
+		TenBitsPair4_OutH(xy, xo, yo);
 
-		TenBitsPair4_Out(xy, x, y);
-
-		xo = x / 1024.;
-		yo = y / 1024.;
+		xo /= 1024.;
+		yo /= 1024.;
 	}
-]]
+
+	void UnitPair4_OutM (P_DEFAULT vec4 xy, $(UV_OUT) vec4 xo, $(UV_OUT) vec4 yo)
+	{
+		P_DEFAULT vec4 xhp, yhp;
+
+		UnitPair4_OutH(xy, xhp, yhp);
+
+		xo = xhp;
+		yo = yhp;
+	}
+]], replacements = Qualifiers
 
 }
