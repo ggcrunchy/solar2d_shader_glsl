@@ -34,6 +34,26 @@ else
 	Replacements.UV_OUT = [[out P_UV]]
 end
 
+Replacements.DECODE = -- Formatting is a little awkward, but makes the GLSL line up
+		[[P_DEFAULT $(TYPE) axy = abs(xy);
+
+		// Select the 2^16-wide floating point range. The first element in this range is 1 *
+		// 2^bin, while the ulp will be 2^bin / 2^16 or, equivalently, 2^(bin - 16). Then the
+		// index of axy is found by dividing its offset into the range by the ulp.
+		P_DEFAULT $(TYPE) bin = floor(log2(axy));
+		P_DEFAULT $(TYPE) num = exp2(16. - bin) * axy - 65536.;
+
+		// The lower 10 bits of the offset make up the y-value. The upper 6 bits, along with
+		// the bin index, are used to compute the x-value. The bin index can exceed 15, so x
+		// can assume the value 1024 without incident. It seems at first that y cannot, since
+		// 10 bits fall just short. If the original input was signed, however, this is taken
+		// to mean "y = 1024". Rather than conditionally setting it directly, though, 1023 is
+		// found in the standard way and then incremented.
+		P_DEFAULT $(TYPE) rest = floor(num / 1024.);
+		P_DEFAULT $(TYPE) y = num - rest * 1024.;
+		P_DEFAULT $(TYPE) y_bias = step(0., -xy);
+]]
+
 -- Export the functions.
 return {
 
@@ -44,23 +64,8 @@ return {
 
 	P_DEFAULT vec2 TenBitsPair (P_DEFAULT float xy)
 	{
-		P_DEFAULT float axy = abs(xy);
-
-		// Select the 2^16-wide floating point range. The first element in this range is 1 *
-		// 2^bin, while the ulp will be 2^bin / 2^16 or, equivalently, 2^(bin - 16). Then the
-		// index of axy is found by dividing its offset into the range by the ulp.
-		P_DEFAULT float bin = floor(log2(axy));
-		P_DEFAULT float num = exp2(16. - bin) * axy - 65536.;
-
-		// The lower 10 bits of the offset make up the y-value. The upper 6 bits, along with
-		// the bin index, are used to compute the x-value. The bin index can exceed 15, so x
-		// can assume the value 1024 without incident. It seems at first that y cannot, since
-		// 10 bits fall just short. If the original input was signed, however, this is taken
-		// to mean "y = 1024". Rather than conditionally setting it directly, though, 1023 is
-		// found in the standard way and then incremented.
-		P_DEFAULT float rest = floor(num / 1024.);
-		P_DEFAULT float y = num - rest * 1024.;
-		P_DEFAULT float y_bias = step(0., -xy);
+		${ TYPE = float }
+		$(DECODE)
 
 		return vec2(bin * 64. + rest, y + y_bias);
 	}
@@ -71,23 +76,8 @@ return {
 
 	void TenBitsPair4_OutH (P_DEFAULT vec4 xy, $(D_OUT) vec4 xo, $(D_OUT) vec4 yo)
 	{
-		P_DEFAULT vec4 axy = abs(xy);
-
-		// Select the 2^16-wide floating point range. The first element in this range is 1 *
-		// 2^bin, while the ulp will be 2^bin / 2^16 or, equivalently, 2^(bin - 16). Then the
-		// index of axy is found by dividing its offset into the range by the ulp.
-		P_DEFAULT vec4 bin = floor(log2(axy));
-		P_DEFAULT vec4 num = exp2(16. - bin) * axy - 65536.;
-
-		// The lower 10 bits of the offset make up the y-value. The upper 6 bits, along with
-		// the bin index, are used to compute the x-value. The bin index can exceed 15, so x
-		// can assume the value 1024 without incident. It seems at first that y cannot, since
-		// 10 bits fall just short. If the original input was signed, however, this is taken
-		// to mean "y = 1024". Rather than conditionally setting it directly, though, 1023 is
-		// found in the standard way and then incremented.
-		P_DEFAULT vec4 rest = floor(num / 1024.);
-		P_DEFAULT vec4 y = num - rest * 1024.;
-		P_DEFAULT vec4 y_bias = step(0., -xy);
+		${ TYPE = vec4 }
+		$(DECODE)
 
 		xo = bin * 64. + rest;
 		yo = y + y_bias;
