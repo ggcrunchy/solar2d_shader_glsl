@@ -27,19 +27,19 @@
 return {
 
 [[
-	vec4 BaryCoords (vec2 uv)
+	P_POSITION vec4 BaryCoords (P_UV vec2 uv)
 	{
 		P_UV vec4 bc = vec4(1. - uv, uv); // .25 * vec4(1. - (2. * uv - 1.), 1. + (2. * uv + 1.))
 
 		return (bc.xzxz * bc.wwyy).zxyw; // Swizzle to account for Corona path order
 	}
 ]], [[
-	vec4 BaryApply (vec4 bc)
+	P_POSITION vec4 BaryApply (P_UV vec4 bc)
 	{
 		return (bc.xzxz * bc.wwyy).zxyw;
 	}
 
-	vec4 BaryPrep (vec2 uv)
+	P_POSITION vec4 BaryPrep (P_UV vec2 uv)
 	{
 		return vec4(1. - uv, uv);
 	}

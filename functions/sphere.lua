@@ -29,7 +29,7 @@ local M = {}
 return {
 
 [[
-	vec2 GetUV (vec2 diff)
+	P_POSITION vec2 GetUV (P_POSITION vec2 diff)
 	{
 		P_POSITION float dist_sq = dot(diff, diff);
 
@@ -42,12 +42,12 @@ return {
 		return vec2(.5 + atan(z, diff.x) / TWO_PI, .5 + asin(diff.y) / PI);
 	}
 
-	vec2 GetUV (vec3 dir)
+	P_POSITION vec2 GetUV (P_POSITION vec3 dir)
 	{
 		return vec2(.5 + atan(dir.z, dir.x) / TWO_PI, .5 + asin(dir.y) / PI);
 	}
 ]], [[
-	vec4 GetUV_ZPhi (vec2 diff)
+	P_POSITION vec4 GetUV_ZPhi (P_POSITION vec2 diff)
 	{
 		P_POSITION float dist_sq = dot(diff, diff);
 
@@ -61,7 +61,7 @@ return {
 		return vec4(.5 + phi / TWO_PI, .5 + asin(diff.y) / PI, z, phi);
 	}
 ]], [[
-	vec2 GetUV_PhiDelta (vec2 diff, float dphi)
+	P_POSITION vec2 GetUV_PhiDelta (P_POSITION vec2 diff, P_POSITION float dphi)
 	{
 		P_POSITION float dist_sq = dot(diff, diff);
 
@@ -78,7 +78,7 @@ return {
 		return vec2(angle, .5 + asin(diff.y) / PI);
 	}
 ]], [[
-	vec4 GetUV_PhiDelta_ZPhi (vec2 diff, float dphi)
+	P_POSITION vec4 GetUV_PhiDelta_ZPhi (P_POSITION vec2 diff, P_POSITION float dphi)
 	{
 		P_POSITION float dist_sq = dot(diff, diff);
 
@@ -95,7 +95,7 @@ return {
 		return vec4(angle, .5 + asin(diff.y) / PI, z, phi);
 	}
 ]], [[
-	vec3 GetTangent (vec2 diff, float phi)
+	P_POSITION vec3 GetTangent (P_POSITION vec2 diff, P_POSITION float phi)
 	{
 		// In unit sphere, diff.y = sin(theta), sqrt(1 - sin(theta)^2) = cos(theta).
 		return normalize(vec3(diff.yy * sin(vec2(phi + PI_OVER_TWO, -phi)), sqrt(1. - diff.y * diff.y)));

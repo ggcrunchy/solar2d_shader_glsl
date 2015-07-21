@@ -27,7 +27,7 @@
 return {
 
 [[
-	float GetLaplacian (sampler2D s, vec2 uv, float a0, float thickness)
+	P_UV float GetLaplacian (sampler2D s, P_UV vec2 uv, P_UV float a0, P_UV float thickness)
 	{
 		a0 *= 4.;
 		a0 -= texture2D(s, uv + vec2(thickness * CoronaTexelSize.x, 0.)).a;
@@ -38,12 +38,12 @@ return {
 		return a0;
 	}
 ]], [[
-	vec4 GetAbovePixel (sampler2D s, vec2 uv)
+	P_UV vec4 GetAbovePixel (sampler2D s, P_UV vec2 uv)
 	{
 		return texture2D(s, uv + vec2(0., CoronaTexelSize.y));
 	}
 
-	vec4 GetRightPixel (sampler2D s, vec2 uv)
+	P_UV vec4 GetRightPixel (sampler2D s, P_UV vec2 uv)
 	{
 		return texture2D(s, uv + vec2(CoronaTexelSize.x, 0.));
 	}
