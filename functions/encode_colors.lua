@@ -1,4 +1,4 @@
---- Front end for shader library.
+--- Mixins to send data through textures, e.g. see [Encoding Floats to RGBA - the Final?](http://aras-p.info/blog/2009/07/30/encoding-floats-to-rgba-the-final/)
 
 --
 -- Permission is hereby granted, free of charge, to any person obtaining
@@ -23,35 +23,34 @@
 -- [ MIT license: http://www.opensource.org/licenses/mit-license.php ]
 --
 
--- Standard library imports --
+-- --
+local Replacements = {}
 
--- Modules --
-local loader = require("corona_shader.loader")
-
--- Exports --
-local M = {}
-
--- Module location --
-local ModuleAt = ...
-
---- Registers the shader building blocks.
-function M.Register ()
-	loader.Load{
-		from = ModuleAt,
-
-		"constants.pi",
-		"functions.bump",
-		"functions.decode_vars",
-		"functions.encode_colors",
-		"functions.neighbors",
-		"functions.sphere",
-		"functions.texels",
-		"functions.noise.simplex",
-		"functions.noise.worley"
-	}
+if system.getInfo("gpuSupportsHighPrecisionFragmentShaders") then
+	Replacements.PRECISION = [[P_DEFAULT]]
+else
+	Replacements.PRECISION = [[P_POSITION]]
 end
 
--- TODO: Doc all the registered constants, functions, etc...
+-- Export the functions.
+return {
 
--- Export the module.
-return M
+[[
+	$(PRECISION) vec4 DecodeFloatRGBA ($(P_PRECISION) float rgba)
+	{
+		return dot(rgba, vec4(1., 1. / 255., 1. / 65025., 1. / 16581375.));
+	}
+]], [[
+	$(PRECISION) vec4 EncodeFloatRGBA ($(P_PRECISION) float v)
+	{
+		$(PRECISION) vec4 enc = vec4(1., 255., 65025., 16581375.) * v;
+
+		enc = fract(enc);
+
+		enc -= enc.yzww * vec4(1. / 255., 1. / 255., 1. / 255., 0.);
+
+		return enc;
+	}
+]], replacements = Replacements
+
+}
