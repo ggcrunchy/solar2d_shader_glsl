@@ -73,7 +73,12 @@ return {
 		P_POSITION float phi = atan(z, diff.x);
 		P_POSITION float angle = .5 + phi / TWO_PI;
 
-		angle = mod(angle + dphi, 1.);
+#ifdef SPHERE_PINGPONG_ANGLE
+		angle = mod(angle + dphi, 2.);
+		angle = mix(angle, 2. - angle, step(1., angle));
+#else
+		angle = fract(angle + dphi);
+#endif
 
 		return vec2(angle, .5 + asin(diff.y) / PI);
 	}
@@ -90,7 +95,7 @@ return {
 		P_POSITION float phi = atan(z, diff.x);
 		P_POSITION float angle = .5 + phi / TWO_PI;
 
-		angle = mod(angle + dphi, 1.);
+		angle = fract(angle + dphi);
 
 		return vec4(angle, .5 + asin(diff.y) / PI, z, phi);
 	}
