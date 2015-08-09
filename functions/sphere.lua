@@ -33,7 +33,7 @@ Replacements.GET_Z = -- Formatting is a little awkward, but makes the GLSL line 
 		[[P_POSITION float dist_sq = dot(diff, diff);
 
 		#ifndef SPHERE_NO_DISCARD
-			if (dist_sq > 1.) return vec2(-1.);
+			if (dist_sq > 1.) return $(Z_RET_TYPE)(-1.);
 		#endif
 
 		P_POSITION float z = sqrt(1. - dist_sq);
@@ -55,6 +55,7 @@ return {
 [[
 	P_POSITION vec2 GetUV (P_POSITION vec2 diff)
 	{
+		${ Z_RET_TYPE = vec2 }
 		$(GET_Z)
 
 		return vec2(.5 + atan(z, diff.x) / TWO_PI, .5 + asin(diff.y) / PI);
@@ -67,6 +68,7 @@ return {
 ]], [[
 	P_POSITION vec4 GetUV_ZPhi (P_POSITION vec2 diff)
 	{
+		${ Z_RET_TYPE = vec2 }
 		$(GET_Z)
 
 		P_POSITION float phi = atan(z, diff.x);
@@ -76,6 +78,7 @@ return {
 ]], [[
 	P_POSITION vec2 GetUV_PhiDelta (P_POSITION vec2 diff, P_POSITION float dphi)
 	{
+		${ Z_RET_TYPE = vec2 }
 		$(GET_Z)
 
 		P_POSITION float phi = atan(z, diff.x);
@@ -87,6 +90,7 @@ return {
 ]], [[
 	P_POSITION vec4 GetUV_PhiDelta_ZPhi (P_POSITION vec2 diff, P_POSITION float dphi)
 	{
+		${ Z_RET_TYPE = vec4 }
 		$(GET_Z)
 
 		P_POSITION float phi = atan(z, diff.x);
