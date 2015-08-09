@@ -26,18 +26,36 @@
 -- Export the functions.
 local M = {}
 
-return {
+-- Common snippets --
+local Replacements = {}
 
-[[
-	P_POSITION vec2 GetUV (P_POSITION vec2 diff)
-	{
-		P_POSITION float dist_sq = dot(diff, diff);
+Replacements.GET_Z = -- Formatting is a little awkward, but makes the GLSL line up...
+		[[P_POSITION float dist_sq = dot(diff, diff);
 
 		#ifndef SPHERE_NO_DISCARD
 			if (dist_sq > 1.) return vec2(-1.);
 		#endif
 
 		P_POSITION float z = sqrt(1. - dist_sq);
+]]
+
+Replacements.PHI_TO_U = -- ...ditto
+		[[P_POSITION float angle = .5 + phi / TWO_PI;
+
+		#ifdef SPHERE_PINGPONG_ANGLE
+			angle = mod(angle + dphi, 2.);
+			angle = mix(angle, 2. - angle, step(1., angle));
+		#else
+			angle = fract(angle + dphi);
+		#endif
+]]
+
+return {
+
+[[
+	P_POSITION vec2 GetUV (P_POSITION vec2 diff)
+	{
+		$(GET_Z)
 
 		return vec2(.5 + atan(z, diff.x) / TWO_PI, .5 + asin(diff.y) / PI);
 	}
@@ -49,13 +67,8 @@ return {
 ]], [[
 	P_POSITION vec4 GetUV_ZPhi (P_POSITION vec2 diff)
 	{
-		P_POSITION float dist_sq = dot(diff, diff);
+		$(GET_Z)
 
-		#ifndef SPHERE_NO_DISCARD
-			if (dist_sq > 1.) return vec4(-1.);
-		#endif
-
-		P_POSITION float z = sqrt(1. - dist_sq);
 		P_POSITION float phi = atan(z, diff.x);
 
 		return vec4(.5 + phi / TWO_PI, .5 + asin(diff.y) / PI, z, phi);
@@ -63,39 +76,22 @@ return {
 ]], [[
 	P_POSITION vec2 GetUV_PhiDelta (P_POSITION vec2 diff, P_POSITION float dphi)
 	{
-		P_POSITION float dist_sq = dot(diff, diff);
+		$(GET_Z)
 
-		#ifndef SPHERE_NO_DISCARD
-			if (dist_sq > 1.) return vec2(-1.);
-		#endif
-
-		P_POSITION float z = sqrt(1. - dist_sq);
 		P_POSITION float phi = atan(z, diff.x);
-		P_POSITION float angle = .5 + phi / TWO_PI;
 
-#ifdef SPHERE_PINGPONG_ANGLE
-		angle = mod(angle + dphi, 2.);
-		angle = mix(angle, 2. - angle, step(1., angle));
-#else
-		angle = fract(angle + dphi);
-#endif
+		$(PHI_TO_U)
 
 		return vec2(angle, .5 + asin(diff.y) / PI);
 	}
 ]], [[
 	P_POSITION vec4 GetUV_PhiDelta_ZPhi (P_POSITION vec2 diff, P_POSITION float dphi)
 	{
-		P_POSITION float dist_sq = dot(diff, diff);
+		$(GET_Z)
 
-		#ifndef SPHERE_NO_DISCARD
-			if (dist_sq > 1.) return vec4(-1.);
-		#endif
-
-		P_POSITION float z = sqrt(1. - dist_sq);
 		P_POSITION float phi = atan(z, diff.x);
-		P_POSITION float angle = .5 + phi / TWO_PI;
 
-		angle = fract(angle + dphi);
+		$(PHI_TO_U)
 
 		return vec4(angle, .5 + asin(diff.y) / PI, z, phi);
 	}
@@ -105,6 +101,6 @@ return {
 		// In unit sphere, diff.y = sin(theta), sqrt(1 - sin(theta)^2) = cos(theta).
 		return normalize(vec3(diff.yy * sin(vec2(phi + PI_OVER_TWO, -phi)), sqrt(1. - diff.y * diff.y)));
 	}
-]]
+]], replacements = Replacements
 
 }

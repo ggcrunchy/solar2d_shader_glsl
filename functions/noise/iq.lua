@@ -1,4 +1,4 @@
---- Front end for shader library.
+--- Mixins for "iq" noise.
 
 --
 -- Permission is hereby granted, free of charge, to any person obtaining
@@ -23,36 +23,36 @@
 -- [ MIT license: http://www.opensource.org/licenses/mit-license.php ]
 --
 
--- Standard library imports --
+-- Export the functions.
+return {
+	ignore = { "hash" },
 
--- Modules --
-local loader = require("corona_shader.loader")
+	[[
+		// Created by inigo quilez - iq/2013
+		// License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
+		P_POSITION float hash (P_UV float n)
+		{
+		#if GL_FRAGMENT_PRECISION_HIGH
+			return fract(sin(n) * 4375.85453);
+		#else
+			return fract(sin(n) * 43.7585453);
+		#endif
+			// TODO: Find a way to detect the precision and tune these!
+		}
 
--- Exports --
-local M = {}
+		// Created by inigo quilez - iq/2013
+		// License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
+		P_POSITION float IQ (P_POSITION vec2 x)
+		{
+			P_POSITION vec2 p = floor(x);
+			P_POSITION vec2 f = fract(x);
 
--- Module location --
-local ModuleAt = ...
+			f = f * f * (3.0 - 2.0 * f);
 
---- Registers the shader building blocks.
-function M.Register ()
-	loader.Load{
-		from = ModuleAt,
+			P_POSITION float n = p.x + p.y * 57.0;
 
-		"constants.pi",
-		"functions.bump",
-		"functions.decode_vars",
-		"functions.encode_colors",
-		"functions.neighbors",
-		"functions.sphere",
-		"functions.texels",
-		"functions.noise.iq",
-		"functions.noise.simplex",
-		"functions.noise.worley"
-	}
-end
-
--- TODO: Doc all the registered constants, functions, etc...
-
--- Export the module.
-return M
+			return mix(mix(hash(n +  0.0), hash(n +  1.0), f.x),
+					   mix(hash(n + 57.0), hash(n + 58.0), f.x), f.y);
+		}
+	]]
+}
