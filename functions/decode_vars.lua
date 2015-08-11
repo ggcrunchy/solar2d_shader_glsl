@@ -37,10 +37,15 @@ end
 Replacements.DECODE = -- Formatting is a little awkward, but makes the GLSL line up
 		[[P_DEFAULT $(TYPE) axy = abs(xy);
 
-		// Select the 2^16-wide floating point range. The first element in this range is 1 *
-		// 2^bin, while the ulp will be 2^bin / 2^16 or, equivalently, 2^(bin - 16). Then the
-		// index of axy is found by dividing its offset into the range by the ulp.
+		// Select a 2^16-wide floating point range, comprising elements (1 + s / 65536) *
+		// 2^bin, where significand s is an integer in [0, 65535]. The range's ulp will be
+		// 2^bin / 2^16, i.e. 2^(bin - 16), and can be used to extract s.
 		P_DEFAULT $(TYPE) bin = floor(log2(axy));
+
+		// N.B. Floating point and real numbers are not the same thing; this is especially
+		// important when working closely with the representation. Some care must be taken
+		// regarding which of several "equivalent" formulae is chosen to find s, in order to
+		// avoid corner cases that show up on certain architectures.
 		P_DEFAULT $(TYPE) num = exp2(16. - bin) * axy - 65536.;
 
 		// The lower 10 bits of the offset make up the y-value. The upper 6 bits, along with
