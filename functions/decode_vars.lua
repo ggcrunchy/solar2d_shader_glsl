@@ -1,4 +1,4 @@
---- Mixins to acquire data sent by @{corona_shader.encode.vars} routines.
+--- Mixins to acquire data sent by **corona_shader.encode.vars** routines.
 
 --
 -- Permission is hereby granted, free of charge, to any person obtaining
