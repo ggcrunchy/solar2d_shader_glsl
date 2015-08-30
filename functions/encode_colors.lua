@@ -36,18 +36,34 @@ end
 return {
 
 [[
-	$(PRECISION) vec4 DecodeFloatRGBA ($(P_PRECISION) float rgba)
+	$(PRECISION) float DecodeFloatRGBA ($(PRECISION) vec4 rgba)
 	{
 		return dot(rgba, vec4(1., 1. / 255., 1. / 65025., 1. / 16581375.));
 	}
+
+	$(PRECISION) vec2 DecodeTwoFloatsRGBA ($(PRECISION) vec4 rgba)
+	{
+		return vec2(dot(rgba.xy, vec2(1., 1. / 255.)), dot(rgba.zw, vec2(1., 1. / 255.)));
+	}
 ]], [[
-	$(PRECISION) vec4 EncodeFloatRGBA ($(P_PRECISION) float v)
+	$(PRECISION) vec4 EncodeFloatRGBA ($(PRECISION) float v)
 	{
 		$(PRECISION) vec4 enc = vec4(1., 255., 65025., 16581375.) * v;
 
 		enc = fract(enc);
 
 		enc -= enc.yzww * vec4(1. / 255., 1. / 255., 1. / 255., 0.);
+
+		return enc;
+	}
+
+	$(PRECISION) vec4 EncodeTwoFloatsRGBA ($(PRECISION) vec2 v)
+	{
+		$(PRECISION) vec4 enc = vec4(1., 255., 1., 255.) * v.xxyy;
+
+		enc = fract(enc);
+
+		enc -= enc.yyww * vec4(1. / 255., 0., 1. / 255., 0.);
 
 		return enc;
 	}
