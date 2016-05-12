@@ -72,7 +72,7 @@ return {
 		return GetWorldNormal(ComputeNormal(s, uv), T, N);
 	}
 
-	P_POSITION vec3 GetWorldNormal_TS (sampler2D s, P_UV vec2 uv, vec3 tcolor, P_POSITION vec3 T, P_POSITION vec3 B, P_POSITION vec3 N)
+	P_POSITION vec3 GetWorldNormal_TS (sampler2D s, P_UV vec2 uv, P_UV vec3 tcolor, P_POSITION vec3 T, P_POSITION vec3 B, P_POSITION vec3 N)
 	{
 		return GetWorldNormal_TS(ComputeNormal(s, uv, tcolor), T, B, N);
 	}
