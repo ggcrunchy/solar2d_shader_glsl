@@ -32,7 +32,7 @@ return {
 		// License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
 		P_POSITION float hash (P_UV float n)
 		{
-		#if GL_FRAGMENT_PRECISION_HIGH
+		#if !defined(GL_FRAGMENT_PRECISION_HIGH) || GL_FRAGMENT_PRECISION_HIGH
 			return fract(sin(n) * 4375.85453);
 		#else
 			return fract(sin(n) * 43.7585453);
