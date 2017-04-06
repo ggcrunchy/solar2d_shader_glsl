@@ -1,4 +1,4 @@
---- Front end for shader library.
+--- Distortion mixins.
 
 --
 -- Permission is hereby granted, free of charge, to any person obtaining
@@ -23,37 +23,28 @@
 -- [ MIT license: http://www.opensource.org/licenses/mit-license.php ]
 --
 
--- Standard library imports --
-
 -- Modules --
-local loader = require("corona_shader.loader")
+local screen_fx = require("corona_shader.screen_fx")
 
--- Exports --
-local M = {}
+-- --
+local Code = [[
+	P_COLOR vec3 GetDistortedRGB (sampler2D s, P_UV vec2 offset, P_UV vec3 divs_alpha)
+	{
+		P_UV vec2 uv = (%s + offset) * divs_alpha.xy;
 
--- Module location --
-local ModuleAt = ...
-
---- Registers the shader building blocks.
-function M.Register ()
-	loader.Load{
-		from = ModuleAt,
-
-		"constants.pi",
-		"functions.bump",
-		"functions.decode_vars",
-		"functions.distort",
-		"functions.encode_colors",
-		"functions.neighbors",
-		"functions.sphere",
-		"functions.texels",
-		"functions.noise.iq",
-		"functions.noise.simplex",
-		"functions.noise.worley"
+		return texture2D(s, uv).rgb * divs_alpha.z;
 	}
-end
 
--- TODO: Doc all the registered constants, functions, etc...
+	P_COLOR vec3 GetDistortedRGB (sampler2D s, P_UV vec2 offset, P_UV vec4 divs_alpha)
+	{
+		return GetDistortedRGB(s, offset, divs_alpha.xyz);
+	}
+]]
 
--- Export the module.
-return M
+-- --
+local Name = screen_fx.GetPosVaryingName()
+
+-- Export the functions.
+return {
+	{ code = Code:format(Name),	[Name] = screen_fx.GetPosVaryingType() }
+}
