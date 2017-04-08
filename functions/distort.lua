@@ -46,5 +46,13 @@ local Name = screen_fx.GetPosVaryingName()
 
 -- Export the functions.
 return {
-	{ code = Code:format(Name),	[Name] = screen_fx.GetPosVaryingType() }
+	{ code = Code:format(Name), [Name] = screen_fx.GetPosVaryingType() },
+
+[[
+	P_UV float GetDistortInfluence (P_UV vec2 uvn, P_UV float low, P_UV float scale)
+	{
+		return (1. - smoothstep(low, 1., dot(uvn, uvn))) * scale;
+	}
+]]
+
 }

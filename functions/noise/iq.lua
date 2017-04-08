@@ -54,5 +54,10 @@ return {
 			return mix(mix(hash(n +  0.0), hash(n +  1.0), f.x),
 					   mix(hash(n + 57.0), hash(n + 58.0), f.x), f.y);
 		}
+
+		P_POSITION vec2 IQ_Octaves (P_POSITION vec2 x, P_POSITION vec2 y)
+		{
+			return vec2(IQ(x) * .5, IQ(y) * .25);
+		}
 	]]
 }
