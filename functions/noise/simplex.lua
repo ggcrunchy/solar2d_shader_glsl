@@ -26,7 +26,7 @@
 -- --
 local Replacements = {}
 
-if system.getInfo("platformName") == "Win" then
+if system.getInfo("platform") == "win32" then
 	Replacements.D_OUT = [[$(PRECISION) out]]
 else
 	Replacements.D_OUT = [[out $(PRECISION)]]
