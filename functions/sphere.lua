@@ -85,7 +85,13 @@ return {
 
 		$(PHI_TO_U)
 
-		return vec2(angle, .5 + asin(diff.y) / PI);
+		P_POSITION vec2 uv = vec2(angle, .5 + asin(diff.y) / PI);
+
+	#ifdef SPHERE_REPAIR_SEAM_POWER
+		uv.x = mix(uv.y * uv.y, uv.x, pow(4. * uv.x * (uv.x - 1.), SPHERE_REPAIR_SEAM_POWER));
+	#endif
+
+		return uv;
 	}
 ]], [[
 	P_POSITION vec4 GetUV_PhiDelta_ZPhi (P_POSITION vec2 diff, P_POSITION float dphi)
