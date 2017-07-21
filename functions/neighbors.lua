@@ -47,6 +47,23 @@ return {
 	{
 		return texture2D(s, uv + vec2(CoronaTexelSize.x, 0.));
 	}
+]], [[
+	// https://math.stackexchange.com/a/601130, after some previous experiments with
+	// http://iquilezles.org/www/articles/smin/smin.htm
+
+	P_COLOR vec4 SoftMin (P_COLOR vec4 a, P_COLOR vec4 b, P_COLOR vec4 c, P_COLOR float k)
+	{
+		P_COLOR vec4 ea = exp(a * k), eb = exp(b * k), ec = exp(c * k);
+
+		return (a * ea + b * eb + c * ec) / (ea + eb + ec);
+	}
+
+	P_COLOR vec4 SoftMin (P_COLOR vec4 a, P_COLOR vec4 b, P_COLOR vec4 c, P_COLOR vec4 d, P_COLOR float k)
+	{
+		P_COLOR vec4 ea = exp(a * k), eb = exp(b * k), ec = exp(c * k), ed = exp(d * k);
+
+		return (a * ea + b * eb + c * ec + d * ed) / (ea + eb + ec + ed);
+	}
 ]]
 
 }
