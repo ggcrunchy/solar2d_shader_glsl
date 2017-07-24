@@ -25,10 +25,10 @@
 
 -- Export the constants.
 return [[
-	P_UV float PI = 4. * atan(1.);
-	P_UV float TWO_PI = 8. * atan(1.);
-	P_UV float PI_OVER_TWO = 2. * atan(1.);
+	P_UV float PI = 3.14159265359;
+	P_UV float TWO_PI = (2. * PI);
+	P_UV float PI_OVER_TWO = (.5 * PI);
 
-	P_UV float ONE_OVER_PI = 1. / atan(1.);
-	P_UV float ONE_OVER_TWO_PI = .5 / atan(1.);
+	P_UV float ONE_OVER_PI = (1. / PI);
+	P_UV float ONE_OVER_TWO_PI = (1. / TWO_PI);
 ]]
