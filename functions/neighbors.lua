@@ -71,6 +71,21 @@ return {
 
 		return (a * ea + b * eb + c * ec + d * ed) / (ea + eb + ec + ed);
 	}
+]], [[
+	P_UV vec4 SoftMax (P_UV vec4 a, P_UV vec4 b, P_UV float k)
+	{
+		return -SoftMin(-a, -b, k);
+	}
+
+	P_UV vec4 SoftMax (P_UV vec4 a, P_UV vec4 b, P_UV vec4 c, P_UV float k)
+	{
+		return -SoftMin(-a, -b, -c, k);
+	}
+
+	P_UV vec4 SoftMax (P_UV vec4 a, P_UV vec4 b, P_UV vec4 c, P_UV vec4 d, P_UV float k)
+	{
+		return -SoftMin(-a, -b, -c, -d, k);
+	}
 ]]
 
 }
