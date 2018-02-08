@@ -64,7 +64,7 @@ return {
 
 [[
 	#if defined(FRAGMENT_SHADER) && !defined(GL_FRAGMENT_PRECISION_HIGH)
-		#error "Not enough precision to decode number"
+		#error Not enough precision to decode number
 	#endif
 
 	P_DEFAULT vec2 TenBitsPair (P_DEFAULT float xy)
@@ -76,7 +76,7 @@ return {
 	}
 ]], [[
 	#if defined(FRAGMENT_SHADER) && !defined(GL_FRAGMENT_PRECISION_HIGH)
-		#error "Not enough precision to decode number"
+		#error Not enough precision to decode number
 	#endif
 
 	void TenBitsPair4_OutH (P_DEFAULT vec4 xy, $(D_OUT) vec4 xo, $(D_OUT) vec4 yo)
