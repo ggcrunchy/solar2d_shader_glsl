@@ -38,7 +38,6 @@ else
 	Replacements.PRECISION = [[P_POSITION]]
 end
 
--- Export the functions.
 return {
 	ignore = { "grad2", "mod289", "permute", "taylorInvSqrt" },
 

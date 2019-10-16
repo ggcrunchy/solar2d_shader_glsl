@@ -23,7 +23,6 @@
 -- [ MIT license: http://www.opensource.org/licenses/mit-license.php ]
 --
 
--- Export the constants.
 return [[
 	P_UV float PI = 3.14159265359;
 	P_UV float TWO_PI = (2. * PI);

@@ -32,7 +32,6 @@ else
 	Replacements.PRECISION = [[P_POSITION]]
 end
 
--- Export the functions.
 return {
 	ignore = { "permute" },
 

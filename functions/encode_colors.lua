@@ -23,7 +23,6 @@
 -- [ MIT license: http://www.opensource.org/licenses/mit-license.php ]
 --
 
--- --
 local Replacements = {}
 
 if system.getInfo("gpuSupportsHighPrecisionFragmentShaders") then
@@ -32,7 +31,6 @@ else
 	Replacements.PRECISION = [[P_POSITION]]
 end
 
--- Export the functions.
 return {
 
 [[

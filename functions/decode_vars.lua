@@ -23,7 +23,6 @@
 -- [ MIT license: http://www.opensource.org/licenses/mit-license.php ]
 --
 
--- --
 local Replacements = {}
 
 if system.getInfo("platform") == "win32" then
@@ -59,7 +58,6 @@ Replacements.DECODE = -- Formatting is a little awkward, but makes the GLSL line
 		P_DEFAULT $(TYPE) y_bias = step(0., -xy);
 ]]
 
--- Export the functions.
 return {
 
 [[

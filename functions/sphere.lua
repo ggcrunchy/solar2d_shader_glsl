@@ -23,10 +23,6 @@
 -- [ MIT license: http://www.opensource.org/licenses/mit-license.php ]
 --
 
--- Export the functions.
-local M = {}
-
--- Common snippets --
 local Replacements = {}
 
 Replacements.GET_Z = -- Formatting is a little awkward, but makes the GLSL line up...

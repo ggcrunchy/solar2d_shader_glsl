@@ -33,7 +33,6 @@ else
 	Replacements.POS = [[P_POSITION]]
 end
 
--- Export the functions.
 return {
 	ignore = { "hash1", "hash2", "m", "noise" },
 

@@ -26,6 +26,10 @@
 -- Modules --
 local screen_fx = require("corona_shader.screen_fx")
 
+--
+--
+--
+
 -- --
 local Code = [[
 	P_COLOR vec3 GetDistortedRGB (sampler2D s, P_UV vec2 offset, P_UV vec3 divs_alpha)
@@ -44,7 +48,6 @@ local Code = [[
 -- --
 local Name = screen_fx.GetPosVaryingName()
 
--- Export the functions.
 return {
 	{ code = Code:format(Name), [Name] = screen_fx.GetPosVaryingType() },
 
