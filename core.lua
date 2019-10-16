@@ -23,13 +23,15 @@
 -- [ MIT license: http://www.opensource.org/licenses/mit-license.php ]
 --
 
--- Standard library imports --
-
 -- Modules --
 local loader = require("corona_shader.loader")
 
 -- Exports --
 local M = {}
+
+--
+--
+--
 
 -- Module location --
 local ModuleAt = ...
@@ -55,5 +57,4 @@ end
 
 -- TODO: Doc all the registered constants, functions, etc...
 
--- Export the module.
 return M
